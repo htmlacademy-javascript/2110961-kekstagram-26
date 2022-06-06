@@ -8,3 +8,7 @@ function isLengthTrue(inputLength, maxLength) {
   }
   return false;
 }
+
+getRandom(50, 150);
+
+isLengthTrue(100, 140);
