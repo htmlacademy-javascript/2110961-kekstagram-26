@@ -2,8 +2,8 @@ function getRandom(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function isLengthTrue(inputLength, maxLength) {
-  if (inputLength <= maxLength) {
+function isLengthTrue(inputValue, maxLength) {
+  if (inputValue.length <= maxLength) {
     return true;
   }
   return false;
@@ -11,4 +11,6 @@ function isLengthTrue(inputLength, maxLength) {
 
 getRandom(50, 150);
 
-isLengthTrue(100, 140);
+isLengthTrue('абвгдежзиклмнопр', 10);
+
+
