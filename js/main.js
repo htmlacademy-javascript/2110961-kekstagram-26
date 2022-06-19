@@ -29,29 +29,58 @@ const DESCRIPTION = [
   'Фото водопада',
 ];
 
-const getRandomPositiveInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
+function getRandomPositiveInteger (min, max) {
+  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
+  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
   const result = Math.random() * (upper - lower + 1) + lower;
   return Math.floor(result);
-};
+}
+
+
+function createRandomIdFromRangeGenerator (min, max) {
+  const previousValues = [];
+
+  return function () {
+    let currentValue = getRandomPositiveInteger(min, max);
+    if (previousValues.length >= (max - min + 1)) {
+      return null;
+    }
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomPositiveInteger(min, max);
+    }
+    previousValues.push(currentValue);
+    return currentValue;
+  };
+}
+
+const generatePhotoId = createRandomIdFromRangeGenerator(1, 25);
+const generatePhotoUrl = createRandomIdFromRangeGenerator(1, 25);
+const generateCommentId = createRandomIdFromRangeGenerator(1, 100);
+
 
 const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
-const createFoto = () => ({
-  id: getRandomPositiveInteger(1, 25),
-  url: `photos/${  getRandomPositiveInteger(1, 25) }.jpg`,
-  description: getRandomArrayElement(DESCRIPTION),
-  likes: getRandomPositiveInteger(15, 200),
-  comments: {
-    id: getRandomPositiveInteger(1, 25),
-    avatar: `img/avatar-${  getRandomPositiveInteger(1, 6)  }.svg`,
-    message: getRandomArrayElement(COMMENTS),
-    name: getRandomArrayElement(NAMES),
-  },
+
+const createComents = () => ({
+  id: generateCommentId (),
+  avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
+  message: getRandomArrayElement(COMMENTS),
+  name: getRandomArrayElement(NAMES),
 });
 
+
+const createFoto = () => ({
+  id: generatePhotoId(),
+  url: `photos/${generatePhotoUrl()}.jpg`,
+  description: getRandomArrayElement(DESCRIPTION),
+  likes: getRandomPositiveInteger(15, 200),
+  comments: Array.from({length: 2}, createComents),
+});
+
+
 const similarFotos = Array.from({length: 25}, createFoto);
-similarFotos();
+
+// eslint-disable-next-line no-console
+console.log(similarFotos);
 
 
