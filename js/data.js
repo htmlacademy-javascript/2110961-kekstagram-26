@@ -34,6 +34,7 @@ const DESCRIPTION = [
 const generatePhotoId = createRandomIdFromRangeGenerator(1, 25);
 const generatePhotoUrl = createRandomIdFromRangeGenerator(1, 25);
 const generateCommentId = createRandomIdFromRangeGenerator(1, 100);
+const generateCommentNum = () => getRandomPositiveInteger(1, 3);
 
 
 const createComents = () => ({
@@ -49,10 +50,10 @@ const createFoto = () => ({
   url: `photos/${generatePhotoUrl()}.jpg`,
   description: getRandomArrayElement(DESCRIPTION),
   likes: getRandomPositiveInteger(15, 200),
-  comments: Array.from({length: 2}, createComents),
+  comments: Array.from({length: generateCommentNum()}, createComents),
 });
 
 
-const similarFotos = () => Array.from({length: 25}, createFoto);
+const createFotos = () => Array.from({length: 25}, createFoto);
 
-export {similarFotos};
+export {createFotos};

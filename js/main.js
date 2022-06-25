@@ -1,6 +1,8 @@
-import {similarFotos} from './data.js';
+import {createFotos} from './data.js';
+import './template.js';
 
 // eslint-disable-next-line no-console
 console.log(
-  similarFotos()
+  createFotos()
 );
+
