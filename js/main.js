@@ -1,8 +1,16 @@
-import {createFotos} from './data.js';
-import './template.js';
-import './form.js';
+import { renderSimilarFotos } from './template.js';
+import { showAlert } from './form.js';
 
-// eslint-disable-next-line no-console
-console.log(
-  createFotos()
-);
+
+fetch('https://26.javascript.pages.academy/kekstagram/data/')
+  .then((response) => {
+    if (response.ok) {
+      return response;
+    }
+    throw new Error(`${response.status} — ${response.statusText}`);
+  })
+  .then((response) => response.json())
+  .then((getPhotoCards) => {
+    renderSimilarFotos(getPhotoCards);
+  })
+  .catch(() => showAlert('Не удалось загрузить изображения'));
