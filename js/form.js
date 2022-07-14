@@ -10,8 +10,13 @@ const smallerBtnNode = form.querySelector('.scale__control--smaller');
 const biggerBtnNode = form.querySelector('.scale__control--bigger');
 const inputScaleNode = form.querySelector('.scale__control--value');
 const re = /[0-9]+/;
-const imgNode = form.querySelector('.img-upload__preview');
+const imgNode = form.querySelector('div.img-upload__preview img');
 const effectCollection = form.querySelector('.effects__list');
+const STEP_SIZE_IMG = 25;
+const RATIO = 100;
+const MAX_SIZE_IMG = 100;
+
+
 form.querySelector('.img-upload__effect-level').style.display = 'none';
 
 effectCollection.onclick = function (evt) {
@@ -26,16 +31,16 @@ effectCollection.onclick = function (evt) {
 
 smallerBtnNode.onclick = function () {
   let val = Number(inputScaleNode.value.match(re));
-  val = (val - 25 === 0) ? 25 : val - 25;
+  val = (val - STEP_SIZE_IMG === 0) ? STEP_SIZE_IMG : val - STEP_SIZE_IMG;
   inputScaleNode.value = `${val  }%`;
-  imgNode.style.transform = `scale(${val/100})`;
+  imgNode.style.transform = `scale(${val/RATIO})`;
 };
 
 biggerBtnNode.onclick = function () {
   let val = Number(inputScaleNode.value.match(re));
-  val = (val + 25 > 100) ? 100 : val + 25;
+  val = (val + STEP_SIZE_IMG > MAX_SIZE_IMG) ? MAX_SIZE_IMG : val + STEP_SIZE_IMG;
   inputScaleNode.value = `${val  }%`;
-  imgNode.style.transform = `scale(${val/100})`;
+  imgNode.style.transform = `scale(${val/RATIO})`;
 };
 
 
