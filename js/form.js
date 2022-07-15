@@ -31,6 +31,7 @@ const messageErrorTemplate = document.querySelector('#error')
 const messageSuccess = messageSuccessTemplate.cloneNode(true);
 const messageError = messageErrorTemplate.cloneNode(true);
 
+
 form.querySelector('.img-upload__effect-level').style.display = 'none';
 
 
