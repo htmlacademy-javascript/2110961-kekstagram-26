@@ -1,8 +1,9 @@
-import {createFotos} from './data.js';
-import './template.js';
-import './form.js';
+import { renderSimilarFotos } from './template.js';
+import { getData } from './api.js';
+import { setUserFormSubmit } from './form.js';
 
-// eslint-disable-next-line no-console
-console.log(
-  createFotos()
-);
+getData ((getPhotoCards) => {
+  renderSimilarFotos(getPhotoCards);
+});
+
+setUserFormSubmit();
