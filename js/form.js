@@ -1,4 +1,5 @@
 import { isEscapeKey } from './util.js';
+import { sendData } from './api.js';
 
 const userModalElement = document.querySelector('.img-upload__overlay');
 const userModalCloseElement = document.querySelector('.img-upload__cancel');
@@ -14,8 +15,10 @@ const imgNode = form.querySelector('div.img-upload__preview img');
 const effectCollection = form.querySelector('.effects__list');
 const STEP_SIZE_IMG = 25;
 const RATIO = 100;
-const MAX_SIZE_IMG= 100;
+const MAX_SIZE_IMG = 100;
 const ALERT_SHOW_TIME = 5000;
+const TXT_CANT_SEND_FORM = 'Не удалось отправить форму. Попробуйте ещё раз';
+const TXT_FORM_INCORRECT = 'Неправильно введены данные';
 
 const messageSuccessTemplate = document.querySelector('#success')
   .content
@@ -39,6 +42,7 @@ const sendResult = (result) => {
     if (res === 'error') { userUploadFile.click(); }
     else { closeEditImageForm(); }
   };
+  sendBtn.disabled = false;
   userModalElement.classList.add('hidden');
   body.appendChild(result === 'error' ? messageError : messageSuccess);
   const onPopupMessageEscKeydown = (evt) => {
@@ -132,7 +136,6 @@ const onPopupEscKeydown = (evt) => {
 };
 
 function openEditImageForm() {
-  sendBtn.disabled = true;
   userModalElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscKeydown);
@@ -176,42 +179,26 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-
-const onFormSubmit = (evt) => {
-  evt.preventDefault();
-  if (formValidate()) {
-
-    const formdata = new FormData(form);
-    sendBtn.disabled = true;
-
-
-    fetch(
-      'https://26.javascript.pages.academy/kekstagram/',
-      {
-        method: 'POST',
-        body: formdata,
-      },
-    )
-      .then((response) => {
-        sendBtn.disabled = false;
-
-        if (response.ok) {
-          sendResult('success');
-
-        } else {
-          sendResult('error');
-        }
-      })
-      .catch(() => {
-        sendBtn.disabled = false;
-        showAlert('Не удалось отправить форму. Попробуйте ещё раз');
-      });
-  } else {
-    showAlert('Неправильно введены данные');
-  }
+const sendFail = () => {
+  sendBtn.disabled = false;
+  showAlert(TXT_CANT_SEND_FORM);
 };
 
+const setUserFormSubmit = () => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    if (formValidate()) {
+      sendBtn.disabled = true;
+      sendData(
+        sendResult,
+        sendFail,
+        new FormData(form),
+      );
+    } else {
+      showAlert(TXT_FORM_INCORRECT);
+      sendBtn.disabled = false;
+    }
+  });
+};
 
-form.addEventListener('submit', onFormSubmit);
-
-export { showAlert };
+export { showAlert, setUserFormSubmit, sendResult};
