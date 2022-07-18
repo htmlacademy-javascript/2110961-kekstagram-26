@@ -6,9 +6,9 @@ const userModalCloseElement = document.querySelector('.img-upload__cancel');
 const userUploadFile = document.querySelector('#upload-file');
 const body = document.body;
 const form = document.querySelector('.img-upload__form');
-const sendBtn = form.querySelector('.img-upload__submit');
-const smallerBtnNode = form.querySelector('.scale__control--smaller');
-const biggerBtnNode = form.querySelector('.scale__control--bigger');
+const sendButton = form.querySelector('.img-upload__submit');
+const smallerButtonNode = form.querySelector('.scale__control--smaller');
+const biggerButtonNode = form.querySelector('.scale__control--bigger');
 const inputScaleNode = form.querySelector('.scale__control--value');
 const re = /[0-9]+/;
 const imgNode = form.querySelector('div.img-upload__preview img');
@@ -35,24 +35,24 @@ form.querySelector('.img-upload__effect-level').style.display = 'none';
 
 
 const sendResult = (result) => {
-  const closePopup = (res) => {
-    const sectionNode = document.querySelector(`.${res}`);
-    sectionNode.remove();
-    userModalElement.classList.remove('hidden');
-    if (res === 'error') { userUploadFile.click(); }
-    else { closeEditImageForm(); }
-  };
-  sendBtn.disabled = false;
-  userModalElement.classList.add('hidden');
-  body.appendChild(result === 'error' ? messageError : messageSuccess);
   const onPopupMessageEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       evt.stopPropagation();
-      document.removeEventListener('keydown', onPopupMessageEscKeydown);
       closePopup(result);
     }
   };
+  function closePopup(item) {
+    document.removeEventListener('keydown', onPopupMessageEscKeydown);
+    const sectionNode = document.querySelector(`.${item}`);
+    sectionNode.remove();
+    userModalElement.classList.remove('hidden');
+    if (item === 'error') { userUploadFile.click(); }
+    else { closeEditImageForm(); }
+  }
+  sendButton.disabled = false;
+  userModalElement.classList.add('hidden');
+  body.appendChild(result === 'error' ? messageError : messageSuccess);
   document.addEventListener('keydown', onPopupMessageEscKeydown);
   const button = document.querySelector(`.${result}__button`);
   const section = document.querySelector(`.${result}`);
@@ -76,18 +76,18 @@ effectCollection.onclick = function (evt) {
 };
 
 
-smallerBtnNode.onclick = function () {
-  let val = Number(inputScaleNode.value.match(re));
-  val = (val - STEP_SIZE_IMG === 0) ? STEP_SIZE_IMG : val - STEP_SIZE_IMG;
-  inputScaleNode.value = `${val}%`;
-  imgNode.style.transform = `scale(${val / RATIO})`;
+smallerButtonNode.onclick = function () {
+  let numberValue = Number(inputScaleNode.value.match(re));
+  numberValue = (numberValue - STEP_SIZE_IMG === 0) ? STEP_SIZE_IMG : numberValue - STEP_SIZE_IMG;
+  inputScaleNode.value = `${numberValue}%`;
+  imgNode.style.transform = `scale(${numberValue / RATIO})`;
 };
 
-biggerBtnNode.onclick = function () {
-  let val = Number(inputScaleNode.value.match(re));
-  val = (val + STEP_SIZE_IMG > MAX_SIZE_IMG) ? MAX_SIZE_IMG : val + STEP_SIZE_IMG;
-  inputScaleNode.value = `${val}%`;
-  imgNode.style.transform = `scale(${val / RATIO})`;
+biggerButtonNode.onclick = function () {
+  let numberValue = Number(inputScaleNode.value.match(re));
+  numberValue = (numberValue + STEP_SIZE_IMG > MAX_SIZE_IMG) ? MAX_SIZE_IMG : numberValue + STEP_SIZE_IMG;
+  inputScaleNode.value = `${numberValue}%`;
+  imgNode.style.transform = `scale(${numberValue / RATIO})`;
 };
 
 
@@ -99,10 +99,10 @@ const pristine = new Pristine(form, {
 const formValidate = () => {
   const isValid = pristine.validate();
   if (isValid) {
-    sendBtn.disabled = false;
+    sendButton.disabled = false;
     return true;
   } else {
-    sendBtn.disabled = true;
+    sendButton.disabled = true;
     return false;
   }
 };
@@ -112,7 +112,6 @@ form.addEventListener('keypress', formValidate);
 const clearInputValue = () => {
   form.querySelector('input.scale__control').value = '100%';
   imgNode.style.transform = 'scale(100%)';
-
   form.querySelector('input.effects__radio').value = 'none';
   form.querySelector('input.effects__radio[value=none]').checked = true;
   imgNode.classList.forEach((item) => {
@@ -169,9 +168,7 @@ const showAlert = (message) => {
   alertContainer.style.fontSize = '30px';
   alertContainer.style.textAlign = 'center';
   alertContainer.style.backgroundColor = 'red';
-
   alertContainer.textContent = message;
-
   document.body.append(alertContainer);
 
   setTimeout(() => {
@@ -180,7 +177,7 @@ const showAlert = (message) => {
 };
 
 const sendFail = () => {
-  sendBtn.disabled = false;
+  sendButton.disabled = false;
   showAlert(TXT_CANT_SEND_FORM);
 };
 
@@ -188,7 +185,7 @@ const setUserFormSubmit = () => {
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
     if (formValidate()) {
-      sendBtn.disabled = true;
+      sendButton.disabled = true;
       sendData(
         sendResult,
         sendFail,
@@ -196,7 +193,7 @@ const setUserFormSubmit = () => {
       );
     } else {
       showAlert(TXT_FORM_INCORRECT);
-      sendBtn.disabled = false;
+      sendButton.disabled = false;
     }
   });
 };
