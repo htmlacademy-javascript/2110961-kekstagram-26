@@ -1,24 +1,25 @@
 import { isEscapeKey } from './util.js';
 import { sendData } from './api.js';
 
-const userModalElement = document.querySelector('.img-upload__overlay');
-const userModalCloseElement = document.querySelector('.img-upload__cancel');
-const userUploadFile = document.querySelector('#upload-file');
-const body = document.body;
-const form = document.querySelector('.img-upload__form');
-const sendButton = form.querySelector('.img-upload__submit');
-const smallerButtonNode = form.querySelector('.scale__control--smaller');
-const biggerButtonNode = form.querySelector('.scale__control--bigger');
-const inputScaleNode = form.querySelector('.scale__control--value');
-const re = /[0-9]+/;
-const imgNode = form.querySelector('div.img-upload__preview img');
-const effectCollection = form.querySelector('.effects__list');
 const STEP_SIZE_IMG = 25;
 const RATIO = 100;
 const MAX_SIZE_IMG = 100;
 const ALERT_SHOW_TIME = 5000;
 const TXT_CANT_SEND_FORM = 'Не удалось отправить форму. Попробуйте ещё раз';
 const TXT_FORM_INCORRECT = 'Неправильно введены данные';
+
+const userModalElement = document.querySelector('.img-upload__overlay');
+const userModalCloseElement = document.querySelector('.img-upload__cancel');
+const userUploadFile = document.querySelector('#upload-file');
+const body = document.body;
+const form = document.querySelector('.img-upload__form');
+const sendButton = form.querySelector('.img-upload__submit');
+const smallerButtonElement = form.querySelector('.scale__control--smaller');
+const biggerButtonElement = form.querySelector('.scale__control--bigger');
+const inputScaleElement = form.querySelector('.scale__control--value');
+const re = /[0-9]+/;
+const imgElement = form.querySelector('div.img-upload__preview img');
+const effectCollection = form.querySelector('.effects__list');
 
 const messageSuccessTemplate = document.querySelector('#success')
   .content
@@ -45,8 +46,8 @@ const sendResult = (result) => {
   };
   function closePopup(item) {
     document.removeEventListener('keydown', onPopupMessageEscKeydown);
-    const sectionNode = document.querySelector(`.${item}`);
-    sectionNode.remove();
+    const sectionElement = document.querySelector(`.${item}`);
+    sectionElement.remove();
     userModalElement.classList.remove('hidden');
     if (item === 'error') { userUploadFile.click(); }
     else { closeEditImageForm(); }
@@ -65,31 +66,31 @@ const sendResult = (result) => {
 };
 
 
-effectCollection.onclick = function (evt) {
+effectCollection.addEventListener('click', (evt) => {
   if (evt.target.nodeName === 'SPAN') {
-    imgNode.classList.forEach((item) => {
+    imgElement.classList.forEach((item) => {
       if (item !== 'img-upload__preview') {
-        imgNode.classList.remove(item);
+        imgElement.classList.remove(item);
       }
     });
-    imgNode.classList.add(evt.target.classList[1]);
+    imgElement.classList.add(evt.target.classList[1]);
   }
-};
+});
 
 
-smallerButtonNode.onclick = function () {
-  let numberValue = Number(inputScaleNode.value.match(re));
+smallerButtonElement.addEventListener('click', () => {
+  let numberValue = Number(inputScaleElement.value.match(re));
   numberValue = (numberValue - STEP_SIZE_IMG === 0) ? STEP_SIZE_IMG : numberValue - STEP_SIZE_IMG;
-  inputScaleNode.value = `${numberValue}%`;
-  imgNode.style.transform = `scale(${numberValue / RATIO})`;
-};
+  inputScaleElement.value = `${numberValue}%`;
+  imgElement.style.transform = `scale(${numberValue / RATIO})`;
+});
 
-biggerButtonNode.onclick = function () {
-  let numberValue = Number(inputScaleNode.value.match(re));
+biggerButtonElement.addEventListener('click', () => {
+  let numberValue = Number(inputScaleElement.value.match(re));
   numberValue = (numberValue + STEP_SIZE_IMG > MAX_SIZE_IMG) ? MAX_SIZE_IMG : numberValue + STEP_SIZE_IMG;
-  inputScaleNode.value = `${numberValue}%`;
-  imgNode.style.transform = `scale(${numberValue / RATIO})`;
-};
+  inputScaleElement.value = `${numberValue}%`;
+  imgElement.style.transform = `scale(${numberValue / RATIO})`;
+});
 
 
 const pristine = new Pristine(form, {
@@ -99,28 +100,23 @@ const pristine = new Pristine(form, {
 
 const formValidate = () => {
   const isValid = pristine.validate();
-  if (isValid) {
-    sendButton.disabled = false;
-    return true;
-  } else {
-    sendButton.disabled = true;
-    return false;
-  }
+  sendButton.disabled = !isValid;
+  return isValid;
 };
 
-form.addEventListener('keypress', formValidate);
+form.addEventListener('keyup', formValidate);
 
 const clearInputValue = () => {
   form.querySelector('input.scale__control').value = '100%';
-  imgNode.style.transform = 'scale(100%)';
+  imgElement.style.transform = 'scale(100%)';
   form.querySelector('input.effects__radio').value = 'none';
   form.querySelector('input.effects__radio[value=none]').checked = true;
-  imgNode.classList.forEach((item) => {
+  imgElement.classList.forEach((item) => {
     if (item !== 'img-upload__preview') {
-      imgNode.classList.remove(item);
+      imgElement.classList.remove(item);
     }
   });
-  imgNode.classList.add('none');
+  imgElement.classList.add('none');
 
   form.querySelector('input.text__hashtags').value = '';
   form.querySelector('textarea.text__description').value = '';
